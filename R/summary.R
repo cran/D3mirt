@@ -3,10 +3,10 @@
 #' @description The `summary.D3mirt()` function presents a compressed output from the [D3mirt::D3mirt()] S3 object.
 #' @param object S3 object of class `D3mirt`.
 #' @param ... Additional arguments.
-#' @param digits User can adjust the number of digits shown per estimate. Default is `digits = 4`.
+#' @param digits User can adjust the number of digits shown per estimate. The default is `digits = 4`.
 #'
 #' @return Tables containing \emph{a} and \emph{d} parameters, multidimensional discrimination (MDISC), multidimensional item difficulty (MDIFF), direction cosines, and degrees for vector angles for items.
-#' If constructs were used in the estimation process, the summary function will also show tables for direction cosines, and degrees for construct vector angles as well as directional discrimination (DDISC) parameters.
+#' If constructs were used in the estimation process, the summary function will also show tables for direction cosines, and degrees for construct vectors as well as directional discrimination (DDISC) parameters.
 #' @author Erik Forsberg
 #' @examples
 #' \donttest{
@@ -16,7 +16,7 @@
 #' x <- x[,3:22] # Remove columns for age and gender
 #'
 #' # Fit a three-dimensional graded response model with orthogonal factors
-#' spec <- ' F1 = 1-20
+#' spec <- '  F1 = 1-20
 #'            F2 = 1-20
 #'            F3 = 1-20
 #'

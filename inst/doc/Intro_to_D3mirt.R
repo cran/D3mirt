@@ -23,7 +23,7 @@ knitr::knit_hooks$set(webgl = hook_webgl)
 #  h <- data.frame(f$rotF)
 
 ## -----------------------------------------------------------------------------
-# Load the EFA data for this example directly from the package file
+# Optional: Load the EFA data for this example directly from the package file
 load("efa.Rdata")
 
 # Call to modid()
@@ -76,7 +76,7 @@ modid(h, fac.order = c(3, 2, 1))
 #                             simplify=TRUE)$'items'[,1:8])
 
 ## -----------------------------------------------------------------------------
-# Load data frame d for for this example directly from the package file
+# Optional: Load data frame d for for this example directly from the package file
 load("d.Rdata")
 
 # Call D3mirt() 
@@ -128,7 +128,7 @@ plotD3mirt(g,
            view = c(15, 20, 0.6))
 
 ## ---- testg7, webgl=TRUE, fig.width = 7, fig.height = 7-----------------------
-# Plot RGL device with uniform scaled items and constructs visible and named
+# Plot RGL device with items in uniform length and constructs visible and named
 plotD3mirt(g, 
            scale = TRUE, 
            constructs = TRUE, 
@@ -143,7 +143,7 @@ plotD3mirt(g,
 #                     full.scores.SE = FALSE, QMC = TRUE)
 
 ## -----------------------------------------------------------------------------
-# Load respondent factor scores for this example directly from the package file
+# Optional: Load respondent factor scores for this example directly from the package file
 load("fscores.Rdata")
 
 # Attach f to the gender variable (column 2 from anes0809offwaves data set; "W3XGENDER")
@@ -162,7 +162,7 @@ plotD3mirt(g, hide = TRUE,
            x.lab = "Compassion", 
            y.lab="Conformity", 
            z.lab="Fairness", 
-           view = c(15, 20, 0.6))
+           view = c(16, 20, 0.6))
 
 ## -----------------------------------------------------------------------------
 # Column bind fscores() with age variable ("W3Xage")

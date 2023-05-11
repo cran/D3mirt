@@ -1,6 +1,6 @@
 Package: D3mirt
 Title: Descriptive 3D Multidimensional Item Response Theory Modeling
-Version: 1.0.2
+Version: 1.0.3
 Authors@R: 
     person("Erik", "Forsberg", , email= "forsbergpsychometrics@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-5228-9729"))
@@ -17,8 +17,8 @@ RoxygenNote: 7.2.3
 LazyData: true
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2023-05-10 16:02:48 UTC; roadcastermusic
+Packaged: 2023-05-11 09:13:59 UTC; roadcastermusic
 Author: Erik Forsberg [aut, cre, cph] (<https://orcid.org/0000-0002-5228-9729>)
 Maintainer: Erik Forsberg <forsbergpsychometrics@gmail.com>
 Repository: CRAN
-Date/Publication: 2023-05-10 16:40:02 UTC
+Date/Publication: 2023-05-11 10:30:09 UTC

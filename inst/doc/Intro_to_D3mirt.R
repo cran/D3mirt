@@ -6,7 +6,6 @@ knitr::opts_chunk$set(
 
 ## ----setup, message = FALSE---------------------------------------------------
 library(D3mirt)
-library(mirt)
 knitr::knit_hooks$set(webgl = hook_webgl)
 
 ## ---- message = FALSE, results = 'hide', eval = FALSE-------------------------

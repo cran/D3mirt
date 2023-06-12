@@ -72,10 +72,10 @@ the `D3mirt` functions. Constructs, in this context, refer to the
 assumption that a subset of items can measure a higher-order latent
 variable. In `D3mirt`, constructs are implemented as optional vectors
 whose orientation is calculated as the average direction, i.e., the
-average multidimensional discrimination of a subset of items in the
-model. A construct vector will, therefore, point in the direction of the
-maximum slope of an imaginary item response function indicated by the
-items chosen by the user.
+average multidimensional discrimination of a subset of items (from one
+item to all items in the set) in the model. A construct vector will,
+therefore, point in the direction of the maximum slope of an imaginary
+item response function indicated by the items chosen by the user.
 
 If constructs are used, the output will include reporting of the
 directional discrimination ($DDISC$) parameter that shows how well the
@@ -166,11 +166,6 @@ e <- mirt::mirt(x, 3, itemtype = 'graded')
 # Assign data frame with factor loadings with oblimin rotation
 f <- summary(e, rotate= 'oblimin')
 h <- data.frame(f$rotF)
-```
-
-``` r
-# Optional: Load the EFA data directly from the package file
-load("vignettes/efa.Rdata")
 ```
 
 The `modid()` takes in the factor solution from the EFA, assigned to a
@@ -323,18 +318,14 @@ d <- data.frame(mirt::coef(mod1,
                            simplify=TRUE)$'items'[,1:8])
 ```
 
-``` r
-# Optional: Load data frame d directly from the package file
-load("vignettes/d.rdata")
-```
-
 Constructs can be included in the analysis by creating one or more
-nested lists that indicate what items belong to what construct. From
+nested lists that indicate what items belong to what construct. Such a
+nested list can contain all items in the set down to a single item. From
 this, the `D3mirt()` function finds the average direction of the subset
-of items contained in each construct list by adding and normalizing the
+of items contained in each nested list by adding and normalizing the
 direction cosines for the items and scaling the construct direction
-vector to an arbitrary length (length can be user adjusted) so that the
-the arrows can be seen when plotting.
+vector to an arbitrary length (length can be adjusted by user) so that
+the the arrows can be seen when plotting.
 
 The construct vector arrows can contribute to the analysis by (a)
 visualizing the average direction for a subset set of items, and (b)
@@ -351,13 +342,13 @@ exploratory reasons, i.e., because these items cluster in the model
 # Call to D3mirt(), including optional nested lists for three constructs
 # Item W7Q16 is not included in any construct because of model violations
 # The model violations for the item can be seen when plotting the model
-c <- list(list (1,2,3,4), 
+c <- list(list(1,2,3,4), 
           list(5,7,8,9,10), 
           list(11,12,13,14,15,15,16,17,18,19,20))
 g <- D3mirt(d, c)
 summary(g)
 #> 
-#> 3Dmirt object with 20 items and 5 levels of difficulty
+#> D3mirt object with 20 items and 5 levels of difficulty
 #> 
 #> Construct vector 1 contains items 1, 2, 3, 4 
 #> 
@@ -487,11 +478,13 @@ plotD3mirt(g,
 
 ![anesdata0809offwaves](anes1.png)Figure 1: Three-dimensional vector
 plot for all items and the three constructs Compassion, Conformity, and
-Fairness (solid black arrows) plotted rotated $15^{\circ}$ clock wise.
+Fairness (solid black arrows) plotted with the model rotated
+$15^{\circ}$ clock wise.
 
 ![anesdata0809offwaves](anes2.png)Figure 2: Three-dimensional vector
 plot for all items and the three constructs Compassion, Conformity, and
-Fairness (solid black arrows) plotted rotated $90^{\circ}$ clock wise.
+Fairness (solid black arrows) plotted with the model rotated
+$90^{\circ}$ clock wise.
 
 An example of how the output can be described could be as follows.
 
@@ -503,15 +496,15 @@ An example of how the output can be described could be as follows.
 > Studying the content of the items, the labels *Compassion*,
 > *Conformity*, and *Fairness* were introduced. The angles of the
 > constructs inform us that Compassion ($\theta = 1.710^{\circ}$,
-> $\phi = 86.486^{\circ}$) and Conformity
-> ($\theta = - 2.519^{\circ}$,$\phi = 28.192^{\circ}$) have some
-> within-multidimensional tendencies. However, they are both more or
-> less orthogonal to the $z$-axis ($\theta = 1.710^{\circ}$ and
-> $\theta = -2.519^{\circ}$ respectively). Next, we find Fairness
-> ($\theta = 49.106^{\circ}$, $\phi = 78.308^{\circ}$) with clear
-> within-multidimensional tendencies with respect to the $x$-axis. Thus,
-> the output indicates that Compassion and Conformity could be
-> independent constructs but that Fairness seems not to be.
+> $\phi = 86.486^{\circ}$) and Conformity ($\theta = - 2.519^{\circ}$,
+> $\phi = 28.192^{\circ}$) have some within-multidimensional tendencies.
+> However, they are both more or less orthogonal to the $z$-axis
+> ($\theta = 1.710^{\circ}$ and $\theta = -2.519^{\circ}$ respectively).
+> Next, we find Fairness ($\theta = 49.106^{\circ}$,
+> $\phi = 78.308^{\circ}$) with clear within-multidimensional tendencies
+> with respect to the $x$-axis. Thus, the output indicates that
+> Compassion and Conformity could be independent constructs but that
+> Fairness seems not to be.
 
 As was mentioned above, the W7Q16 was not included in any of the
 constructs because the item had measurement problems. For example, the
@@ -534,9 +527,9 @@ plotD3mirt(g,
 ```
 
 ![anesdata0809offwaves](item1.png)Figure 3: The item W7Q16 plotted with
-the three constructs, with the model rotated $15^{\circ}$ clock wise.
+the three constructs and with the model rotated $15^{\circ}$ clock wise.
 ![anesdata0809offwaves](item2.png)Figure 4: The item W7Q16 plotted with
-the three constructs, with the model rotated $90^{\circ}$ clock wise.
+the three constructs and with the model rotated $90^{\circ}$ clock wise.
 
 An example of how the output can be described could be as follows.
 
@@ -588,11 +581,6 @@ f <- mirt::fscores(mod1,
 ```
 
 ``` r
-# Optional: Load the respondent factor scores directly from the package file
-load("vignettes/fscores.Rdata")
-```
-
-``` r
 # Attach f to the gender variable (column 2 from anes0809offwaves data set; "W3XGENDER")
 # Use cbind with fscores() output attached first
 data("anes0809offwaves")
@@ -628,10 +616,12 @@ plotD3mirt(g, hide = TRUE,
 ```
 
 ![anesdata0809offwaves](p1.png)Figure 5: Gender profile for the
-`anes0809offwaves` data set, plotted rotated $15^{\circ}$ clock wise.
+`anes0809offwaves` data set plotted with the model rotated $15^{\circ}$
+clock wise.
 
 ![anesdata0809offwaves](p2.png)Figure 6: Gender profile for the
-`anes0809offwaves` data set, plotted rotated $90^{\circ}$ clock wise.
+`anes0809offwaves` data set plotted with the model rotated $90^{\circ}$
+clock wise.
 
 An example of how the output can be described could be as follows.
 
@@ -696,11 +686,11 @@ plotD3mirt(g, hide = TRUE,
 
 ![anesdata0809offwaves](ci1.png)Figure 7: Adults less than or equal to
 age 30 from the `anes0809offwaves` data set plotted surrounded by a
-$95\%\,CI$ and rotated $15^{\circ}$ clock wise.
+$95\%\,CI$ and with the model rotated $15^{\circ}$ clock wise.
 
 ![anesdata0809offwaves](ci2.png)Figure 8: Adults less than or equal to
 age 30 from the `anes0809offwaves` data set plotted surrounded by a
-$95\%\,CI$ and rotated $90^{\circ}$ clock wise.
+$95\%\,CI$ and with the model rotated $90^{\circ}$ clock wise.
 
 An example of how the output can be described could be as follows.
 

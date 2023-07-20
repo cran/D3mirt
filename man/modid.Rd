@@ -4,10 +4,25 @@
 \alias{modid}
 \title{D3mirt Model Identification}
 \usage{
-modid(x, lower = 0.5, upper = 0.1, fac.order = NULL)
+modid(
+  x,
+  efa = TRUE,
+  factors = 3,
+  lower = 0.5,
+  upper = 0.1,
+  fac.order = NULL,
+  itemtype = "graded",
+  method = "EM",
+  rotate = "oblimin",
+  ...
+)
 }
 \arguments{
-\item{x}{A data frame with factor loadings}
+\item{x}{A data frame with item data or item factor loadings that fit the multidimensional graded response model (MGRM) or the multidimensional 2-parameter logistic model (M2PL).}
+
+\item{efa}{Logical, if the data should be explored with exploratory factor analysis. The default is \code{efa = TRUE}.}
+
+\item{factors}{The number of factors for the exploratory factor analysis. The default is \code{factors = 3}.}
 
 \item{lower}{The lower bound for the item pool is calculated using the standard deviation of scaled item factor loadings. The default is \code{lower = 0.5}.}
 
@@ -15,6 +30,14 @@ modid(x, lower = 0.5, upper = 0.1, fac.order = NULL)
 
 \item{fac.order}{Optional. Users can override the automatic sorting of factors by manually indicating factor order with integer values, e.g., \code{c(2,1,3)} to use the second factor (or column) in data frame x first, first factor (or column) in x second, and the third factor (or column) is left untouched.
 The default is \code{fac.order = NULL}.}
+
+\item{itemtype}{The item model for the exploratory factor analysis. Note, only item type 'graded' (for the MGRM) or '2PL' (for the M2PL) are allowed. The default is \code{itemtype = "graded"}. See \link[mirt:mirt]{mirt::mirt} (Chalmers, 2012) for more on item models.}
+
+\item{method}{A string indicating what integration algorithm to use. The default is \code{method = 'QMCEM'}. See \link[mirt:mirt]{mirt::mirt} (Chalmers, 2012) for more on methods.}
+
+\item{rotate}{A string indicating what rotation method to use for the exploratory factor analysis. The default is \code{rotate = "oblimin"}. See \link[mirt:mirt]{mirt::mirt} (Chalmers, 2012) for more on rotations.}
+
+\item{...}{Any additional arguments passed to mirt().}
 }
 \value{
 S3 object of class \code{modid} with lists of items and absolute sum scores, sorted by the latter, and sum of squared factor loadings and frame with raw factor loadings with columns ordered on explained variance (high to low) or according to user settings.
@@ -24,33 +47,37 @@ S3 object of class \code{modid} with lists of items and absolute sum scores, sor
 }
 \details{
 Before performing DMIRT analysis it is necessary to identify the compensatory model (Reckase, 2009).
-For a three-dimensional model, this entails that two items must be chosen.
-If improper items are chosen the model will be hard to interpret.
-The \code{modid()} function was designed to maximize the former analytically.
-Briefly, the function first order factors by the sum of squares, and from this select the strongest loading items that meet the statistical assumptions described above.
-This orders the model so that the strongest loading item, from the strongest factor, always aligns perfectly with the x-axis and that the other items follow thereon.
+For a three-dimensional model, this entails that two items must be fixed.
+The first item should not load on the second and third axes (y and z), while the second item should not load on the third axis (z).
+If this can be empirically achieved, it will be possible to create the orthogonal structure necessary for the analysis.
 
-Of the two items that must be chosen for \code{D3mirt}analysis, the first item is constrained not to load on the second and third axes (y and z),
-while the second item is only constrained not to load on the third axis (z).
+The \code{modid()} function can help by suggesting what items to use for this purpose.
+Briefly, this is done by \code{modid()} by first performing an EFA, then ordering factors by the sum of squares, and from this select the strongest loading items that meet the statistical assumptions described above.
+This orders the entire model so that the strongest loading item, from the strongest factor, always aligns with the x-axis and the other items follow thereon.
+
+Because \code{D3mirt} analysis is based on the M2PL and the MGRM it is recommended to use multidimensional item response theory EFA methods, such as the EFA option in \link[mirt:mirt]{mirt::mirt} (Chalmers, 2012) with \code{ìtemtype = 'graded'} or \code{'2PL'}, so that the EFA is performed with the proper item model.
+The \code{mirt()} function is integrated into the \code{modid()} function so that the user needs only to provide the data frame containing empirical item data in the first argument of the function.
+Accordingly, in the default mode (\code{efa = TRUE}) using raw item data, the function performs an EFA, with three factors as default (\code{factors = 3}), and then finishes with the model identification.
+
+However, it is also possible to use the \code{modid()} function without performing the EFA by setting \code{efa = FALSE}, if, for instance, a factor loading data frame is already available.
+This allows the function to jump directly to the model identification step.
+
+Note, the EFA is only used to find model identification items that meet the necessary DMIRT model specification requirements.
+The EFA model itself is discarded after this step in the procedure and the user can, therefore, try different types of rotation methods and compare model identification results.
+
+Running the function prints the number of items and factors together with the suggested model identification items to the console.
+The output consists of an S3 object of class \code{modid} containing lists with model identification items, order of factor strength (based on sum of squares), and item factor loadings.
+The summary function is used to inspect the results.
+The latter includes data frames that hold all the model identification items (\code{Item.1...Item.n}) selected by \code{modid()} together with the items absolute sum score (\code{ABS}), one frame for sum of squares for factors sorted in descending order, and one frame for item factor loadings.
+The order of the factors follows the model identification items so that item 1 comes from the strongest factor, item 2 from the second strongest, and so on.
+
+The absolute sum scores indicate statistical fit to the structural assumptions of the DMIRT model and the items are, therefore, sorted with the lowest absolute sum score highest up.
+The top items are the items that best meet the necessary statistical requirements for the model identification.
+For a three-dimensional model this implies that the item highest up in the first data frame should be used to identify the x-axis, and the item highest up in the second data frame should be used to identify the y-axis, and so on.
+
+When fitting the model, the first item is constrained not to load on the second and third axes (y and z), while the second item is only constrained not to load on the third axis (z).
 This will identify an orthogonal three-dimensional structure with the first item fixed on the x-axis.
-The model identification process is briefly explained below. For further details, please see the package vignette.
-\subsection{Step 1: Explore Data Structure}{
-
-To begin the factor structure must be explored with exploratory factor analysis (EFA).
-However, because \code{D3mirt} analysis is based on item response theory, and uses the multidimensional two-parameter logistic model or the multidimensional graded response model, it is preferable to use item response theory EFA methods,
-such as the EFA option in \link[mirt:mirt]{mirt::mirt} (Chalmers, 2012) with \code{ìtemtype = 'graded'}, or \code{'2PL'} and number of factors set to 3.
-Observe that the EFA is only used to find the appropriate items for the model identification and the EFA itself is discarded after this step in the procedure.
-}
-
-\subsection{Step 2: Item Selection}{
-
-The \code{modid()} takes in the factor solution from the EFA, assigned to a data frame \emph{x}, and outputs lists (denoted \emph{id1]...idn}) with suggestions of items (\emph{item.1....item.n}) to use for the model identification.
-These lists contain one column with the highest factor loadings (equal to or higher than the limit set by the lower bound) from each item on the factor of interest and one column with absolute sum scores for the items calculated based on the remaining factor loadings in the model.
-Each list is sorted with the lowest absolute sum score highest up.
-Accordingly, the top items in each list are the items that best meet the assumption of orthogonality in the model.
-Therefore, for a three-dimensional model, all else equal, the item highest up in the first list should be used to identify the x-axis, and the item highest up in the second list should be used to identify the y-axis, and so on.
-}
-
+For more details on the model identification process, please see the package vignette.
 \subsection{Criteria}{
 
 Model identification items should preferably (a) have an absolute sum score of less than or equal to .10 and (b) have the highest factor loading scores on the factor of interest.
@@ -78,7 +105,7 @@ causes problems (often only observable at later stages) when trying to find the 
 Note, the \code{modid()} function is not limited to three-dimensional analysis and can be used on any number of factors.
 Moreover, although based on suggestions on model identification given by Reckase (2009) for this type of analysis, the function offers some expansions that introduce more precision.
 The latter foremost consists in incorporating sum of squares in the item selection process (unless the user has not specified otherwise).
-Experience tells that this is good practice that often leads to better results compared to other options.
+Experience tells that this often leads to better results compared to other options.
 However, it is important to recognize that the \code{modid()} function only gives suggestions to the model specification, and there could be situations where the researcher should consider other methods.
 }
 }
@@ -89,21 +116,20 @@ data("anes0809offwaves")
 x <- anes0809offwaves
 x <- x[,3:22] # Remove columns for age and gender
 
-# Fit a three-factor EFA model with the mirt package
-e <- mirt::mirt(x, 3, itemtype = 'graded')
+# Identify the DMIRT model using a three-factor EFA
+g <- modid(x)
 
-# Assign data frame with factor loadings with oblimin rotation
-f <- summary(e, rotate= 'oblimin')
-h <- data.frame(f$rotF)
+# Optional: Load the EFA data for this example directly from the package file
+# load(system.file("extdata/efa.Rdata", package = "D3mirt"))
 
-# Call to modid()
-modid(h)
+# Call to summary
+summary(g)
 
-# Call to modid with increased lower and higher bound
-modid(h, lower = 1, upper = .12 )
+# Call to modid with increased lower and upper bound
+modid(x, lower = 1, upper = 1 )
 
 # Override factor order by reversing columns in the original data frame
-modid(h, fac.order = c(3,2,1))
+modid(x, fac.order = c(3,2,1))
 }
 }
 \references{
@@ -111,7 +137,7 @@ Chalmers, R., P. (2012). mirt: A Multidimensional Item Response Theory Package f
 
 Reckase, M. D. (2009). \emph{Multidimensional Item Response Theory}. Springer.
 
-Reckase, M. D., & McKinley, R. L. (1991). The Discriminating Power of Items That Measure More Than One Dimension. \emph{Applied Psychological Measurement, 15}(4), 361-373–373. https://doi-org.ezp.sub.su.se/10.1177/014662169101500407
+Reckase, M. D., & McKinley, R. L. (1991). The Discriminating Power of Items That Measure More Than One Dimension. \emph{Applied Psychological Measurement, 15}(4), 361-373. https://doi-org.ezp.sub.su.se/10.1177/014662169101500407
 }
 \author{
 Erik Forsberg

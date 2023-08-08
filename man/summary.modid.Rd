@@ -2,22 +2,22 @@
 % Please edit documentation in R/summarymodid.R
 \name{summary.modid}
 \alias{summary.modid}
-\title{Summary Function for S3 Objects of Class \code{modid}}
+\title{Summary Method for S3 Objects of Class \code{modid}}
 \usage{
 \method{summary}{modid}(object, ..., digits = 4)
 }
 \arguments{
-\item{object}{S3 object of class \code{modid}.}
+\item{object}{A S3 object of class \code{modid}.}
 
 \item{...}{Additional arguments.}
 
 \item{digits}{The number of digits shown per estimate. The default is \code{digits = 4}.}
 }
 \value{
-Model identification items (one less than the number of factors), factor loadings and absolute sum score for items, and squared factor loadings for the model identification items.
+Model identification items (one less than the number of factors), factor loadings and absolute sum score for model identification items, squared factor loadings and factor loadings for all items.
 }
 \description{
-The \code{summary.modid()} function returns the output from the \code{\link[=modid]{modid()}} function.
+The summary method for the \code{\link[=modid]{modid()}} function.
 }
 \examples{
 \dontrun{

@@ -4,7 +4,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 
-## ----setup, message = FALSE---------------------------------------------------
+## ----setup, message = FALSE, include = FALSE----------------------------------
 library(D3mirt)
 knitr::knit_hooks$set(webgl = hook_webgl)
 
@@ -14,9 +14,12 @@ knitr::knit_hooks$set(webgl = hook_webgl)
 #  x <- anes0809offwaves
 #  x <- x[,3:22] # Remove columns for age and gender
 
-## -----------------------------------------------------------------------------
-# Optional: Load the EFA data for this example directly from the package file
-load(system.file("extdata/efa.Rdata", package = "D3mirt"))
+## ---- include = FALSE---------------------------------------------------------
+load("efa.Rdata")
+
+## ---- eval = FALSE------------------------------------------------------------
+#  # Optional: Load the EFA data for this example directly from the package file
+#  load(system.file("extdata/efa.Rdata", package = "D3mirt"))
 
 ## -----------------------------------------------------------------------------
 # Call to modid()
@@ -65,9 +68,12 @@ summary(c)
 #                     SE = TRUE,
 #                     method = 'QMCEM')
 
-## -----------------------------------------------------------------------------
-# Optional: Load the mod1 as a data frame directly from the package file
-load(system.file("extdata/mod1.Rdata", package = "D3mirt"))
+## ---- include = FALSE---------------------------------------------------------
+load("mod1.Rdata")
+
+## ---- eval = FALSE------------------------------------------------------------
+#  # Optional: Load the mod1 as a data frame directly from the package file
+#  load(system.file("extdata/mod1.Rdata", package = "D3mirt"))
 
 ## -----------------------------------------------------------------------------
 # Call D3mirt()
@@ -94,6 +100,13 @@ plot(g, constructs = TRUE,
         construct.lab = c("Compassion", "Fairness", "Conformity"), 
         view = c(15, 20, 0.6))
 
+## ---- testg5, webgl=TRUE, fig.width = 7, fig.height = 7-----------------------
+# A selection of Conformity items from the model plotted with constructs
+plot(g, constructs = TRUE, 
+        items = c(15,17,18,19,20), 
+        construct.lab = c("Compassion", "Fairness", "Conformity"), 
+        view = c(15, 20, 0.6))
+
 ## ---- testg3, webgl=TRUE, fig.width = 7, fig.height = 7-----------------------
 # Item W7Q16 has location 16 in the data set (gender and age excluded)
 # The item is plotted together with constructs to aid the visual interpretation
@@ -102,16 +115,9 @@ plot(g, constructs = TRUE,
         construct.lab = c("Compassion", "Fairness", "Conformity"), 
         view = c(15, 20, 0.6))
 
-## ---- testg4, webgl = TRUE, fig.width = 7, fig.height = 7---------------------
+## ---- testg4, webgl=TRUE, fig.width = 7, fig.height = 7-----------------------
 # Plot RGL device on item difficulty level 5
 plot(g, diff.level = 5, 
-        view = c(15, 20, 0.6))
-
-## ---- testg5, webgl=TRUE, fig.width = 7, fig.height = 7-----------------------
-# A selection of Conformity items from the model plotted with constructs
-plot(g, constructs = TRUE, 
-        items = c(15,17,18,19,20), 
-        construct.lab = c("Compassion", "Fairness", "Conformity"), 
         view = c(15, 20, 0.6))
 
 ## ---- testg6, webgl=TRUE, fig.width = 7, fig.height = 7-----------------------
@@ -128,9 +134,12 @@ plot(g, scale = TRUE,
 #                     full.scores = TRUE,
 #                     full.scores.SE = FALSE, QMC = TRUE)
 
-## -----------------------------------------------------------------------------
-# Optional: Load the respondent factor scores for this example directly from the package file
-load(system.file("extdata/fscores.Rdata", package = "D3mirt"))
+## ---- include = FALSE---------------------------------------------------------
+load("fscores.Rdata")
+
+## ---- eval = FALSE------------------------------------------------------------
+#  # Optional: Load the respondent factor scores for this example directly from the package file
+#  load(system.file("extdata/fscores.Rdata", package = "D3mirt"))
 
 ## -----------------------------------------------------------------------------
 # Attach f to the gender variable (column 2 from anes0809offwaves data set; "W3XGENDER")

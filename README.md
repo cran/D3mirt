@@ -110,7 +110,8 @@ install.packages('D3mirt')
 devtools::install_github("ForsbergPyschometrics/D3mirt")
 ```
 
-In what follows, the `D3mirt` procedure will be described very briefly
+In what follows, the `D3mirt` procedure, including the main functions
+and some of the more essential arguments, will be described very briefly
 using the built-in data set “anes0809offwaves”. The data set
 ($N = 1046, M_{age} = 51.33, SD = 14.56, 57\%$ Female) is a subset from
 the American National Election Survey (ANES) from the 2008-2009 Panel
@@ -127,8 +128,7 @@ The D3mirt approach largely consists of the following three steps:
 3.  Plotting
 
 For more details on the `D3mirt` package, including extended examples of
-analysis and functions, please see the vignette included in the package
-documentation.
+analysis and functions, please see the vignette included in the package.
 
 # 1. Model Identification
 
@@ -137,20 +137,26 @@ model must be identified (Reckase, 2009). In the three-dimensional case,
 this implies locating the $x$ and $y$-axis by selecting two items from
 the item set. The first item should not load on the second and third
 axes ($y$ and $z$), while the second item should not load on the third
-axis ($z$).
+axis ($z$). Consequently, if the model is not known beforehand it is
+necessary to explore the data with exploratory factor analysis (EFA),
+preferably with the help of the EFA methods suitable for DMIRT.
 
-If the model is not known beforehand it is necessary to explore the data
-with exploratory factor analysis (EFA), preferably with the help of the
-EFA option in `mirt::mirt` (Chalmers, 2012), using `ìtemtype = 'graded'`
-or `'2PL'`. Note, the EFA is only used to find model identification
-items that meet the necessary DMIRT model specification requirements.
-The EFA model itself is discarded after this step in the procedure. This
-implies that the rotation method is less crucial and the user is
-encouraged to try different rotation methods and compare the results.
+The `modid()` function was designed to help with this step in the
+process. The function first performs an EFA using multidimensional item
+response theory and then select items so that the strongest loading
+item, from the strongest factor, always aligns perfectly with the
+x-axis, and the remaining items follow thereafter. This helps makes the
+result maximally interpretable while also avoiding imposing an
+unempirical structure on the data.
 
-Note, all outputs from functions from the `mirt` package are available
-as ready-made package files that can be loaded directly into the R
-session.
+Note, the EFA is only used to find model identification items that meet
+the necessary DMIRT model specification requirements. The EFA model
+itself is discarded after this step in the procedure. This implies that
+the rotation method is less crucial and the user is encouraged to try
+different rotation methods and compare the results.
+
+Begin by loading the item data. Note, all outputs are available as
+ready-made package files that can be loaded directly into the R session.
 
 ``` r
 # Load data
@@ -160,9 +166,10 @@ x <- x[,3:22] # Remove columns for age and gender
 ```
 
 The `modid()` can take in raw item data or a data frame with item factor
-loadings. In the default mode (`efa = TRUE`) using raw data, the
-function performs an EFA, with three factors as default (`factors = 3`),
-and then finishes with the model identification. If, however, item
+loadings. In the default mode (`efa = TRUE`), using raw data, the
+function performs an EFA using the EFA option in the `mirt()` (Chalmers,
+2012) function with three factors as default (`factors = 3`). The
+function then finishes with the model identification. If, however, item
 factor loadings are already available, the function can jump directly to
 the model identification by setting `efa = FALSE`.
 
@@ -174,27 +181,6 @@ increase the item pool used in the procedure while the upper bound acts
 as a filter that removes items that do not meet the necessary
 statistical requirements. This implies that the upper bound should not,
 in general, be manipulated.
-
-The `summary()` function prints the number of items and the number of
-factors used in the analysis together with the suggested model
-identification items. As can be seen, the items suggested by `modid()`
-are the items “W7Q3” and “W7Q20”. The output also includes data frames
-that hold all the model identification items (`Item.1...Item.n`)
-selected by `modid()` together with the items’ absolute sum score
-(`ABS`), one frame for the sum of squares for factors sorted in
-descending order, and one frame for item factor loadings. The order of
-the factors follows the model identification items so that item 1 comes
-from the strongest factor (sorted highest up), item 2 from the second
-strongest (sorted second), and so on.
-
-The absolute sum scores indicate statistical fit to the structural
-assumptions of the DMIRT model and the items are, therefore, sorted with
-the lowest absolute sum score highest up. The top items are the items
-that best meet the necessary statistical requirements for the model
-identification. For a three-dimensional model this implies that the item
-highest up in the first data frame should be used to identify the
-$x$-axis, and the item highest up in the second data frame should be
-used to identify the $y$-axis, and so on.
 
 ``` r
 # Optional: Load the EFA data for this example directly from the package file
@@ -252,16 +238,26 @@ summary(a)
 
 The `summary()` function prints the number of items and the number of
 factors used in the analysis together with the suggested model
-identification items. As can be seen, the items that are suggested by
-`modid()` to identify the model are the items “W7Q3”, for the $x$-axis,
-and “W7Q20”, for the $y$-axis.
+identification items. As can be seen, the items suggested by `modid()`
+are the items “W7Q3” and “W7Q20”. The output also includes data frames
+that hold all the model identification items (`Item.1...Item.n`)
+selected by `modid()` together with the items’ absolute sum score
+(`ABS`), one frame for the sum of squares for factors sorted in
+descending order, and one frame for item factor loadings.
 
-The `modid()` is designed so that the strongest loading item, from the
-strongest factor, always aligns perfectly with the x-axis, and the
-remaining items follow thereafter. This helps makes the result maximally
-interpretable while also avoiding, with the help of the upper bound,
-imposing an unempirical structure on the data. If problems appear with
-the model identification, please see the package vignette for guidance.
+The order of the factors follows the model identification items so that
+item 1 comes from the strongest factor (sorted highest up), item 2 from
+the second strongest (sorted second), and so on. The absolute sum scores
+indicate statistical fit to the structural assumptions of the DMIRT
+model and the items are, therefore, sorted with the lowest absolute sum
+score highest up. The top items are the items that best meet the
+necessary statistical requirements for the model identification. For a
+three-dimensional model this implies that the item highest up in the
+first data frame should be used to identify the $x$-axis, and the item
+highest up in the second data frame should be used to identify the
+$y$-axis, and so on. For more on the model identification procedure
+(e.g., trouble shooting, criteria, or limitations), see package
+vignette.
 
 # 2. D3mirt Model Estimation
 
@@ -471,15 +467,13 @@ followed by all necessary DMIRT estimates.
 
 # 3. Plotting
 
-## The `plot()` Function
-
 The `plot()` method for objects of class `D3mirt` is built on the `rgl`
 package (Adler & Murdoch, 2023) for visualization with OpenGL. Graphing
 in default mode by calling `plot()` will return an RGL device that will
 appear in an external window as a three-dimensional interactive object,
 containing vector arrows with the latent dimensions running along the
 orthogonal axes, that can be rotated. In this illustration, however, all
-RGL devices are plotted inline as still shots from two angles,
+RGL devices are plotted inline as still shots displayed from two angles,
 $15^{\circ}$ (clockwise; default plot angle) and $90^{\circ}$. To change
 the plot output to $90^{\circ}$, use the `view` argument in the `plot()`
 function and change the first indicator from $15$ to $90$.
@@ -520,16 +514,41 @@ An example of how the output can be described could be as follows.
 > $x$-axis. Thus, the output indicates that Compassion and Conformity
 > could be independent constructs but that Fairness seems not to be.
 
-As was mentioned above, the W7Q16 was not included in any of the
-constructs because the item showed signs of measurement problems. For
-example, the short vector arrows indicate high amounts of model
-violations and the location of the item in the model also indicates that
-the item is within-multidimensional and that it does not seem to belong
-to any construct explicitly.
+## 3.1. `items`
 
-The `plot()` function allows plotting W7Q16 in isolation using the
-argument `items` and by entering the number indicating where the item
-appears in the data set (see `?anes0809offwaves`).
+A subset of items can be plotted for a more thorough investigation using
+the `items` argument. In the example below, all constructs are plotted
+together with the items used for the conformity construct. In the
+function call, the numerical indicators in the `items` argument follow
+the item order in the original data frame (see `?anes0809offwaves`).
+
+``` r
+# The Conformity items from the model plotted with construct vector arrows
+plot(g, constructs = TRUE, 
+        items = c(15,17,18,19,20), 
+        construct.lab = c("Compassion", "Fairness", "Conformity"), 
+        view = c(15, 20, 0.6))
+```
+
+![](./images/con1.png)
+
+Figure 7: The items from the Conformity construct plotted with the model
+rotated $15^{\circ}$ clockwise.
+
+![](./images/con2.png)
+
+Figure 8: The items from the Conformity construct plotted the model
+rotated $90^{\circ}$ clockwise.
+
+The `plot()` function also allows plotting a single item by entering a
+single number indicating what item that should be displayed. As was
+mentioned above, the W7Q16 was not included in any of the constructs
+because the item showed signs of measurement problems. For example, the
+short vector arrows indicate high amounts of model violations and the
+location of the item in the model also indicates that the item is
+within-multidimensional and that it does not seem to belong to any
+construct explicitly. Typing in $16$ in the `items` argument allows for
+a closer look.
 
 ``` r
 # Item W7Q16 has location 16 in the data set (gender and age excluded)
@@ -549,7 +568,8 @@ model rotated $15^{\circ}$ clockwise.
 Figure 4: The item W7Q16 plotted with the three constructs and with the
 model rotated $90^{\circ}$ clockwise.
 
-An example of how the output can be described could be as follows.
+An example of how the output for analysis of the single item could be as
+follows.
 
 > The Figures 3 and 4 shows that item W7Q16 is located at
 > $\theta = 16.085^{\circ}$, $\phi = 57.476^{\circ}$, indicating that
@@ -570,17 +590,70 @@ An example of how the output can be described could be as follows.
 > direction discrimination ($DDISC_1 = .502$, $DDISC_2 = .332$,
 > $DDISC_3 = .912$).
 
-## `D3mirt` Profile Analysis
+## 3.2. `diff.level`
+
+The user has the option of plotting on one level of difficulty at a time
+with the `diff.level` argument studying the entire scale, a subset of
+items, or on one item at a time. Note, *difficulty* refers to the number
+of item response functions in the items, i.e., the total number of
+response options minus one. In this case, $6$ response options were used
+which means that the model has $5$ levels of difficulty.
+
+``` r
+# Plot RGL device on item difficulty level 5
+plot(g, diff.level = 5, 
+        view = c(15, 20, 0.6))
+```
+
+![](./images/diff1.png)
+
+Figure 5: All items plotted on difficulty level 5 and with the model
+rotated $15^{\circ}$ clockwise.
+
+![](./images/diff2.png)
+
+Figure 6: All items plotted on difficulty level 5 and with the model
+rotated $90^{\circ}$ clockwise.
+
+## 3.3 `scale`
+
+The `D3mirt()` function returns item vector coordinates estimated with
+and without the $MDISC$ as a scalar for the arrow length. When the
+$MDISC$ is not used for the arrow length, all item vector arrows are
+scaled to one unit length. This allows the user to graph the item vector
+arrows with `plot()` set to a uniform length. This can help reduce
+visual clutter in the graphical output. To view the item vector arrows
+without the $MDISC$, set `scale = TRUE`.
+
+``` r
+# Plot RGL device with items in uniform length and constructs visible and named
+plot(g, scale = TRUE, 
+        constructs = TRUE, 
+        construct.lab = c("Compassion", "Fairness", "Conformity"), 
+        view = c(15, 20, 0.6))
+```
+
+![](./images/scale1.png)
+
+Figure 9: All items scaled to uniform length and plotted with the model
+rotated $15^{\circ}$ clockwise.
+
+![](./images/scale2.png)
+
+Figure 10: All items scaled to uniform length and plotted with the model
+rotated $90^{\circ}$ clockwise.
+
+## 3.4. `D3mirt` Profile Analysis
 
 The `plot()` function can also display respondents in the
-three-dimensional model represented as spheres located using respondent
-factors scores used as coordinates. This allows for a profile analysis
-in which respondents can be separated, or subset, conditioned on single
-or multiple criteria and then plotted. The resulting output shows where
-the respondents are located in the model, and, accordingly, what model
-profile best describes them. Similarly, respondent categories can be
-simultaneously compared to see if a group-level effect can be visually
-observed.
+three-dimensional model represented as spheres whose coordinates are
+derived from the respondent’s factor scores. This allows for a profile
+analysis in which respondents can be separated, or subset, conditioned
+on single or multiple criteria and then plotted. The resulting output
+shows where the respondents are located in the model, and, accordingly,
+what model profile best describes them. Similarly, respondent categories
+can be simultaneously compared to see if a group-level effect can be
+visually observed.
 
 To do this, the user must first extract respondent factor scores with
 `fscores()` (Chalmers, 2012) and then separate or select a subset of
@@ -638,28 +711,27 @@ plot(g, hide = TRUE,
 
 ![](./images/p1.png)
 
-Figure 5: Gender profile for the `anes0809offwaves` data set plotted
+Figure 11: Gender profile for the `anes0809offwaves` data set plotted
 with the model rotated $15^{\circ}$ clockwise.
 
 ![](./images/p2.png)
 
-Figure 6: Gender profile for the `anes0809offwaves` data set plotted
+Figure 12: Gender profile for the `anes0809offwaves` data set plotted
 with the model rotated $90^{\circ}$ clockwise.
 
 An example of how the output can be described could be as follows.
 
 > In Figures 5 and 6, it can be observed a simple profile on gender in
-> which more women tend to have higher levels of trait Compassion. When
+> which more women tend to have higher levels of Compassion. When
 > rotating the model $90^{\circ}$ clockwise, there seems not to be any
-> easily observable gender difference related to trait Conformity or
-> trait Fairness.
+> easily observable gender difference related to Conformity or Fairness.
 
-### Plotting Confidence Intervals
+## 3.5. Plotting Confidence Intervals
 
 It is also possible to plot a confidence interval in the shape of an
-ellipse surrounding the individual factor scores. In the example below,
-the younger individuals ($\leq30$) are selected and plotted together
-with a $95\%$ *CI*.
+ellipse surrounding the spheres. In the example below, the younger
+individuals ($\leq30$) are selected and plotted together with a $95\%$
+*CI*.
 
 ``` r
 # Column bind fscores() with age variable ("W3Xage") from column 1
@@ -708,30 +780,30 @@ plot(g, hide = TRUE,
 
 ![](./images/ci1.png)
 
-Figure 7: Adults less than or equal to age 30 from the
+Figure 13: Adults less than or equal to age 30 from the
 `anes0809offwaves` data set plotted surrounded by a $95\%\,CI$ and with
 the model rotated $15^{\circ}$ clockwise.
 
 ![](./images/ci2.png)
 
-Figure 8: Adults less than or equal to age 30 from the
+Figure 14: Adults less than or equal to age 30 from the
 `anes0809offwaves` data set plotted surrounded by a $95\%\,CI$ and with
 the model rotated $90^{\circ}$ clockwise.
 
 An example of how the output can be described could be as follows.
 
 > In Figures 7 and 8 we can see a tendency for a profile on age in which
-> younger individuals could be described as less oriented towards trait
+> younger individuals could be described as less oriented towards
 > Conformity. We can also observe a tendency for what could be an
-> interaction effect in which higher levels of trait Conformity seem to
-> be associated with lower levels of trait Fairness.
+> interaction effect in which higher levels of Conformity seem to be
+> associated with lower levels of Fairness.
 
-# Exporting The RGL Device
+# 4. Exporting The RGL Device
 
 Some options for exporting the RGL device are shown below. Over and
 above these, it is also possible to export graphical devices in R
 Markdown documents with `rgl::hookwebgl()` together with graphical
-options for knitr, as was done when creating this vignette.
+options for knitr, as was done when creating the package vignette.
 
 ``` r
 # Export an open RGL device to the console that can be saved as an html or image file

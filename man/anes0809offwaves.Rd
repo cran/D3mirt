@@ -12,7 +12,7 @@ A data frame with 1046 rows and 22 columns:
 \item{W3Xage}{Age}
 \item{W3XGENDER}{Gender (Male = 1, Female = 2)}
 \item{W7Q1}{When one of my loved ones needs my attention, I really try to slow down and give them the time and help they need}
-\item{W7Q2}{I am known by family and friends as someone who makes time to pay attention to others’ problems}
+\item{W7Q2}{I am known by family and friends as someone who makes time to pay attention to others' problems}
 \item{W7Q3}{I’m the kind of person who is willing to go the “extra mile” to help take care of my friends, relatives, and acquaintances}
 \item{W7Q4}{When friends or family members experience something upsetting or discouraging I make a special point of being kind to them}
 \item{W7Q5}{When it comes to my personal relationships with others, I am a very generous person}
@@ -44,7 +44,7 @@ anes0809offwaves
 \description{
 A subset of data (\emph{N} = 1046, \emph{Mean age} = 51.33, \emph{SD} = 14.56, 57\% Female) from the ANES 2008-2009 Panel Study Off Wave Questionnaires, December 2009 (DeBell et al., 2010),
 with complete responses on a pilot version of the Judgment subscale from what became the Moral Foundations Questionnaire (Graham et al., 2011).
-Demographic variables include age and gender (two levels) and Likert-items positively scored on a scale from 1 = \emph{Strongly Disagree} to 6 = \emph{Strongly Agree}.
+Demographic variables include age and gender (two levels), and Likert-items positively scored on a scale from 1 = \emph{Strongly Disagree} to 6 = \emph{Strongly Agree}.
 }
 \examples{
 data(anes0809offwaves)
@@ -52,6 +52,7 @@ data(anes0809offwaves)
 \references{
 DeBell, M., Krosnick, J. A., & Lupia, A. (2010). \emph{Methodology Report and User’s Guide for the 2008–2009 ANES Panel Study}. Palo Alto, CA, and Ann Arbor, MI: Stanford University and the University of Michigan.
 
-Graham, J., Nosek, B. A., Haidt, J., Iyer, R., Koleva, S., & Ditto, P. H. (2011). Mapping the moral domain. \emph{Journal of Personality and Social Psychology, 101}(2), 366–385. https://doi.org/10.1037/a0021847
+Graham, J., Nosek, B. A., Haidt, J., Iyer, R., Koleva, S., & Ditto, P. H. (2011). Mapping the moral domain. \emph{Journal of Personality and Social Psychology, 101}(2), 366–385.\cr
+https://doi.org/10.1037/a0021847
 }
 \keyword{datasets}

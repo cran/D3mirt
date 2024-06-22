@@ -14,23 +14,26 @@
 \item{digits}{The number of digits shown per estimate. The default is \code{digits = 4}.}
 }
 \value{
-Model identification items (one less than the number of factors), factor loadings and absolute sum score for model identification items, squared factor loadings and factor loadings for all items.
+Model identification items (one less than the number of factors), factor loadings and absolute sum score for model identification items, squared factor loadings, and factor loadings for all items.
 }
 \description{
 The summary method for the \code{\link[=modid]{modid()}} function.
 }
 \examples{
 \dontrun{
-# Identify the DMIRT model using a three-factor EFA with modid()
-# x can be a data frame with item data or item factor loadings.
-# In the case of the latter, set argument 'efa' to 'FALSE'
-g <- modid(x)
+# Load data
+data("anes0809offwaves")
+x <- anes0809offwaves
+x <- x[,3:22] # Remove columns for age and gender
+
+# Identify the DMIRT model
+id <- modid(x)
 
 # Call to summary
-summary(x)
+summary(id)
 
 # Call to summary rounded off to 2 digits
-summary(x, digits = 2)
+summary(id, digits = 2)
 }
 }
 \author{
